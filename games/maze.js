@@ -135,6 +135,12 @@ function getMousePos(canvas, evt) {
   };
 }
 
+setInterval(() => {
+  dispatch({
+    type: 'popup',
+  });
+}, 15000);
+
 //using mouse position to check if mouse hits a wall/ calculate points
 //checks if mouse touches the end element
 canvas.addEventListener("mousemove", function (event) {

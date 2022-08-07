@@ -294,6 +294,12 @@ setInterval(() => {
 }, 100);
 
 setInterval(() => {
+  dispatch({
+    type: 'popup',
+  });
+}, 15000);
+
+setInterval(() => {
   if (status === 'win') return;
   
   points = points - 100;
