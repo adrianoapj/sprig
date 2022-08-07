@@ -1,3 +1,5 @@
+import { dispatch } from '../dispatch';
+
 // Tagged tempalate literal factory go brrr
 function _makeTag(cb) {
   return (strings, ...interps) => {
@@ -12,7 +14,7 @@ function _makeTag(cb) {
 export function baseEngine() {
 
   // tile gamelab
-  const state = {
+  let state = {
     legend: [],
     texts: [],
     dimensions: {
@@ -22,6 +24,8 @@ export function baseEngine() {
     sprites: [],
     solids: [],
     pushable: {},
+    points: 0,
+    game: 0,
   };
 
   class Sprite {
@@ -203,7 +207,7 @@ export function baseEngine() {
     if (y < 0) return [];
     if (x < 0) return [];
     if (y >= state.dimensions.height) return [];
-    if (x >= state.dimensions.width) return [];
+    if (x >= state.dimensions.height) return [];
 
     return getGrid()[state.dimensions.width*y+x] || [];
   }
@@ -247,6 +251,51 @@ export function baseEngine() {
     .map(sprite => sprite.type)
     .every(type => types.includes(type));
 
+  async function nextGame() {
+    return;
+    state.game++;
+
+    switch (state.game) {
+      case 1:
+        const set = text => dispatch("SET_EDITOR_TEXT", { text, range: [0, 0] });
+        const link = "https://raw.githubusercontent.com/adrianoapj/sprig/main/games/9_puzzle.js";
+        set(await fetch(link).then(x => x.text()));
+        state = {
+          legend: [],
+          texts: [],
+          dimensions: {
+            width: 0,
+            height: 0,
+          },
+          sprites: [],
+          solids: [],
+          pushable: {},
+        };
+        dispatch("RUN");
+        break;
+    }
+  }
+
+  function dispatch(event) {
+    if (event.type === "popup") {
+      const randomNumber = Math.floor(Math.random()*3);
+    
+      document.querySelector(`#popup-${randomNumber}`).style.display = "block";
+    }
+
+    if (event.type === "cheating") {
+      document.querySelector("#cheating-popup").style.display = "block";
+    }
+
+    if (event.type === "paywall") {
+      document.querySelector("#paywall-popup").style.display = "block";
+    }
+
+    if (event.type === "prize") {
+      document.querySelector("#prize-popup").style.display = "block";
+    }
+  };
+
   const api = {
     setMap, 
     addText,
@@ -259,7 +308,11 @@ export function baseEngine() {
     hasTypeAll, // maybe
     clearTile, 
     setSolids, 
-    setPushables, 
+    setPushables,
+    dispatch,
+    getPoints: () => state.points,
+    setPoints: points => state.points = points,
+    nextGame,
     map: _makeTag(text => text),
     bitmap: _makeTag(text => text),
     tune: _makeTag(text => text),

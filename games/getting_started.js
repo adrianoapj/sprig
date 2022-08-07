@@ -225,6 +225,10 @@ onInput("w", () => {
   });
 });
 
+onInput("j", () => {
+  nextGame();
+});
+
 const jump = async () => {
   await createArray(3).reduce(async (promise) => {
     await promise;
