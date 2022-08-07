@@ -61,9 +61,9 @@ export const view = (state) => {
     </div>
   </div>
 
-  <div class="popup" id="popup-prize" style="position: absolute;top: 15%;left: 20px;">
+  <div class="popup" id="popup-prize">
     <div>
-      <img src="/popups/prize1.jpg" width="40%">
+      <img src="/popups/prize1.jpg" width="30%" style="position: absolute;top: 15%;left: 20px;">
       <img src="/popups/prize.png" width="100%" height="100%">
       <button @click=${closePopup}>X</button>
     </div>
