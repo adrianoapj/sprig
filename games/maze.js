@@ -11,7 +11,7 @@ const start = 's';
 const end = 'e';
 var pointsInt = 0;
 var cheating = "false";
-var canvas = document.querySelector("body > div > div.main-container > div.game-docs-container > div.game-canvas-container > canvas.game-canvas")
+var canvas = document.querySelector("canvas.game-canvas")
 var text = addText("points: ",{y:14, x:2, color:[0,0,0]});
 
 //setting/design of elements

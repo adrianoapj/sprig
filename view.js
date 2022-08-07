@@ -6,45 +6,50 @@ import "./sequencer/sequencer.js";
 import "./views/bitmap-preview.js";
 
 export const view = (state) => html`
-  ${startButton(state)}
-
-  <div class="main-container">
-    <div class="code-container">
-      <div id="code-editor"></div>
-      <div class=${["logs", state.errorInfo ? "erred" : ""].join(" ")}>
-        ${state.logs.map(x => html`${x}<br>`)}
-      </div>
+  <div class="popup" id="popup-0">
+    <div>
+      <img src="/popups/0.png" width="100%" height="100%">
+      <button>X</button>
     </div>
-    
-    <div class="game-docs-container">
-      <div class="game-canvas-container">
-        <canvas class="game-canvas"></canvas>
-        <canvas class="game-text"></canvas>
-      </div>
-      <div class="docs">
-        ${docs(state)}
-      </div>
-    </div>
-
   </div>
 
-  <div class=${["asset-editor-container", state.editor ? "" : "hide"].join(" ")}  @click=${(event) => {
-    // Click on overlay or close button:
-    for (const item of event.composedPath()) {
-      if (item.classList && item.classList.contains("asset-editor-content")) return;
-    }
-    dispatch("SET_ASSET_EDITOR", { type: null, text: null })
-  }}>
-    <button class="close"><ion-icon icon="close" /></button>
-    <div class="asset-editor-content">
-      ${
-        {
-          "bitmap": html`<pixel-editor id="asset-editor"></pixel-editor>`,
-          "sequencer": html`<sequencer-editor id="asset-editor"></sequencer-editor>`,
-          "map": html`<map-editor id="asset-editor"></map-editor>`,
-          [undefined]: ""
-        }[state.editor]
+  <div class="main">
+    ${startButton(state)}
+
+    <div class="main-container">
+      <div class="code-container">
+        <div id="code-editor"></div>
+          <div class=${["logs", state.errorInfo ? "erred" : ""].join(" ")}>
+            ${state.logs.map(x => html`${x}<br>`)}
+          </div>
+        </div>
+      
+        <div class="game-canvas-container">
+          <canvas class="game-canvas"></canvas>
+          <canvas class="game-text"></canvas>
+        </div>
+      </div>
+
+    </div>
+
+    <div class=${["asset-editor-container", state.editor ? "" : "hide"].join(" ")}  @click=${(event) => {
+      // Click on overlay or close button:
+      for (const item of event.composedPath()) {
+        if (item.classList && item.classList.contains("asset-editor-content")) return;
       }
+      dispatch("SET_ASSET_EDITOR", { type: null, text: null })
+    }}>
+      <button class="close"><ion-icon icon="close" /></button>
+      <div class="asset-editor-content">
+        ${
+          {
+            "bitmap": html`<pixel-editor id="asset-editor"></pixel-editor>`,
+            "sequencer": html`<sequencer-editor id="asset-editor"></sequencer-editor>`,
+            "map": html`<map-editor id="asset-editor"></map-editor>`,
+            [undefined]: ""
+          }[state.editor]
+        }
+      </div>
     </div>
   </div>
 `
@@ -181,7 +186,7 @@ const startButton = (state) => html`
   class=${["menu-item", "run", state.staleRun ? "stale-run" : ""].join(" ")} 
   @click=${() => dispatch("RUN")}>
   <ion-icon name="play" style="margin-right: 6px;" />
-  Start game
+  Restart game
 </div>
 `;
 

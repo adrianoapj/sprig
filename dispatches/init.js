@@ -34,6 +34,7 @@ export async function init(args, state) {
   const set = text => dispatch("SET_EDITOR_TEXT", { text, range: [0, 0] });
   const link = "https://raw.githubusercontent.com/adrianoapj/sprig/main/games/tutorial.js";
   set(await fetch(link).then(x => x.text()));
+  dispatch("RUN");
 
   window.addEventListener("error", (e) => {
     // this is a hack to cut down on this chrome bug: https://support.google.com/chrome/thread/165732696/typing-in-console-triggers-error?hl=en
@@ -84,10 +85,6 @@ export async function init(args, state) {
   new ResizeObserver(sizeGameCanvas).observe(container);
 
   document.querySelector(".game-canvas").focus();
-
-  const md = await fetch("https://raw.githubusercontent.com/hackclub/sprig/main/docs/docs.md").then(res => res.text());
-  const mdRenderer = document.querySelector("markdown-renderer");
-  mdRenderer.innerHTML = md;
 
   dispatch("RENDER");
 }

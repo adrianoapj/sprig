@@ -19,7 +19,7 @@
 :root { box-sizing: border-box; }
 * { box-sizing: inherit; }
 
-body, html, .root {
+body, html, .root, .main {
   margin: 0;
   height: 100%;
 }
@@ -29,12 +29,15 @@ body {
   background-image: url(/bg.png);
   background-position: center center;
   background-size: 100px;
-  padding: 20px;
 }
 
-.root {
+.main, .root {
   display: flex;
   flex-direction: column;
+}
+
+.main {
+  padding: 30px;
 }
 
 .menu {
@@ -145,6 +148,7 @@ body {
   position: relative;
   display: flex;
   overflow: hidden;
+  justify-content: center;
 }
 
 .code-container {
@@ -193,7 +197,6 @@ body {
 }
 
 .game-canvas-container {
-  width: 100%;
   max-height: calc(100% - var(--docs-percentage));
   aspect-ratio: 5/4;
   transition: height 0.2s ease-in-out;
@@ -221,6 +224,29 @@ body {
 .game-canvas {
   image-rendering: pixelated;
   outline: none;
+}
+
+.popup {
+  display: none;
+  position: absolute;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1000;
+  background-color: rgb(0, 0, 0, 0.5);
+}
+
+.popup > div {
+  width: 75vh;
+  height: 75vh;
+  position: relative;
+}
+
+.popup button {
+  position: absolute;
+  left: 0;
+  cursor: pointer;
 }
 
 .docs {

@@ -26,6 +26,7 @@ export function baseEngine() {
     pushable: {},
     points: 0,
     game: 0,
+    ad: false,
   };
 
   class Sprite {
@@ -294,21 +295,36 @@ export function baseEngine() {
 
   function dispatch(event) {
     if (event.type === "popup") {
+      if (state.ad)
+        return;
+
       const randomNumber = Math.floor(Math.random()*3);
     
       document.querySelector(`#popup-${randomNumber}`).style.display = "block";
+
+      state.ad = true;
     }
 
     if (event.type === "cheating") {
+      if (state.ad || state.game === 2)
+        return;
+
       document.querySelector("#cheating-popup").style.display = "block";
     }
 
     if (event.type === "paywall") {
+      if (!state.ad)
+        return;
+
       document.querySelector("#paywall-popup").style.display = "block";
     }
 
     if (event.type === "prize") {
       document.querySelector("#prize-popup").style.display = "block";
+
+      setTimeout(() => {
+        document.querySelector("#prize-popup").style.display = "none";
+      }, 10000);
     }
   };
 
