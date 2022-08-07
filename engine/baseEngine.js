@@ -76,9 +76,9 @@ export function baseEngine() {
   const _canMoveToPush = (sprite, dx, dy) => {
     const { x, y, type } = sprite;
     const { width, height } = state.dimensions;
-    const i = (x+dx)+(y+dy)*width;
+    const i = (x + dx) + (y + dy) * width;
 
-    const inBounds = (x+dx < width && x+dx >= 0 && y+dy < height && y+dy >= 0);
+    const inBounds = (x + dx < width && x + dx >= 0 && y + dy < height && y + dy >= 0);
     if (!inBounds) return false;
 
     const grid = getGrid();
@@ -95,7 +95,7 @@ export function baseEngine() {
 
     let canMove = true;
 
-    const { pushable }  = state;
+    const { pushable } = state;
 
     grid[i].forEach(sprite => {
       const isSolid = state.solids.includes(sprite.type);
@@ -120,9 +120,9 @@ export function baseEngine() {
   const getGrid = () => {
     const { width, height } = state.dimensions;
 
-    const grid = new Array(width*height).fill(0).map(x => []);
+    const grid = new Array(width * height).fill(0).map(x => []);
     state.sprites.forEach(s => {
-      const i = s.x+s.y*width;
+      const i = s.x + s.y * width;
       grid[i].push(s);
     })
 
@@ -149,12 +149,12 @@ export function baseEngine() {
     const s = new Sprite(type, x, y);
     state.sprites.push(s);
   }
-  
+
   const _allEqual = arr => arr.every(val => val === arr[0]);
 
-  function setMap(string) { 
+  function setMap(string) {
     if (!string) throw new Error("Tried to set empty map.");
-    
+
     const rows = string.trim().split("\n").map(x => x.trim());
     const rowLengths = rows.map(x => x.length);
     const isRect = _allEqual(rowLengths)
@@ -166,14 +166,14 @@ export function baseEngine() {
 
     state.sprites = [];
 
-    for (let i = 0; i < w*h; i++) {
+    for (let i = 0; i < w * h; i++) {
       const char = string.split("").filter(x => x.match(/\S/))[i];
       if (char === ".") continue;
       // the index will be the ascii char for the number of the index
       const type = char;
 
-      const x = i%w; 
-      const y = Math.floor(i/w);
+      const x = i % w;
+      const y = Math.floor(i / w);
 
       addSprite(x, y, type);
     }
@@ -184,9 +184,9 @@ export function baseEngine() {
   }
 
   /* opts: x, y, color (all optional) */
-  function addText(str, opts={}) {
+  function addText(str, opts = {}) {
     const CHARS_MAX_X = 21;
-    const padLeft = Math.floor((CHARS_MAX_X - str.length)/2);
+    const padLeft = Math.floor((CHARS_MAX_X - str.length) / 2);
 
     state.texts.push({
       x: opts.x ?? padLeft,
@@ -200,14 +200,14 @@ export function baseEngine() {
     state.texts = [];
   }
 
-  function getTile(x, y) { 
-    
+  function getTile(x, y) {
+
     if (y < 0) return [];
     if (x < 0) return [];
     if (y >= state.dimensions.height) return [];
     if (x >= state.dimensions.width) return [];
 
-    return getGrid()[state.dimensions.width*y+x] || [];
+    return getGrid()[state.dimensions.width * y + x] || [];
   }
 
   function hasDuplicates(array) {
@@ -220,7 +220,7 @@ export function baseEngine() {
     const grid = getGrid();
     for (let x = 0; x < width; x++) {
       for (let y = 0; y < height; y++) {
-        const tile = grid[width*y+x] || [];
+        const tile = grid[width * y + x] || [];
         const matchIndices = matchingTypes.map(type => {
           return tile.map(s => s.type).indexOf(type);
         })
@@ -256,7 +256,7 @@ export function baseEngine() {
 
     sessionStorage.setItem('game', game + 1);
 
-    const set = text => dispatchEngine("SET_EDITOR_TEXT", { text, range: [0, 0]});
+    const set = text => dispatchEngine("SET_EDITOR_TEXT", { text, range: [0, 0] });
 
     switch (game + 1) {
       case 1:
@@ -299,8 +299,14 @@ export function baseEngine() {
 
     if (event.type === "popup") {
 
-      const randomNumber = Math.floor(Math.random()*3);
-    
+      const isOpen = Array.from(document.querySelectorAll('.popup').values()).some(({ style: { display } }) => display === "flex")
+
+      console.log(isOpen);
+
+      if (isOpen) return;
+
+      const randomNumber = Math.floor(Math.random() * 3);
+
       document.querySelector(`#popup-${randomNumber}`).style.display = "flex";
     }
 
@@ -325,7 +331,7 @@ export function baseEngine() {
   };
 
   const api = {
-    setMap, 
+    setMap,
     addText,
     clearText,
     addSprite,
@@ -334,8 +340,8 @@ export function baseEngine() {
     tilesWith,
     hasTypeAny, // maybe
     hasTypeAll, // maybe
-    clearTile, 
-    setSolids, 
+    clearTile,
+    setSolids,
     setPushables,
     dispatch,
     getPoints: () => sessionStorage.getItem('points') || 0,
@@ -348,7 +354,7 @@ export function baseEngine() {
     getAll: (type) => type ? state.sprites.filter(t => t.type === type) : state.sprites, // **
     width: () => state.dimensions.width,
     height: () => state.dimensions.height,
-    setBackground: (type) => { 
+    setBackground: (type) => {
       _checkLegend(type);
       background = type;
     }

@@ -9,6 +9,10 @@ export const view = (state) => {
   const closePopup = (event) => {
     document.querySelectorAll('.popup').forEach(e => e.style.display = 'none');
   }
+  const openPayment = (event) => {
+    document.querySelectorAll('.popup').forEach(e => e.style.display = 'none');
+    document.querySelectorAll('#popup-payment').forEach(e => e.style.display = 'flex');
+  }
 
   return html`
   <div class="popup" id="popup-0">
@@ -35,26 +39,27 @@ export const view = (state) => {
   <div class="popup" id="popup-cheating">
     <div>
       <img src="/popups/cheating.png" width="100%" height="100%">
-      <button @click=${closePopup}>X</button>
+      <button class="disaprove" style="font-size: 1.5rem" @click=${openPayment}>I will be a better person</button>
     </div>
   </div>
 
   <div class="popup" id="popup-paywall">
     <div>
       <img src="/popups/paywall.png" width="100%" height="100%">
-      <button @click=${closePopup}>X</button>
+      <button class="payup" @click=${openPayment}>Pay fee</button>
     </div>
   </div>
 
   <div class="popup" id="popup-payment">
     <div>
       <img src="/popups/payment.png" width="100%" height="100%">
-      <button @click=${closePopup}>X</button>
+      <button class="continue" @click=${closePopup}>Continue</button>
     </div>
   </div>
 
   <div class="popup" id="popup-prize">
     <div>
+      <img src="/popups/prize${Math.ceil(Math.random() * 3)}.jpg" width="40%">
       <img src="/popups/prize.png" width="100%" height="100%">
       <button @click=${closePopup}>X</button>
     </div>

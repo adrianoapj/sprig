@@ -166,6 +166,8 @@ canvas.addEventListener("mousemove", function (event) {
       dispatch({
         type: 'cheating',
       });
+      pointsInt -= 1000;
+      addText(pointsInt.toString(), { y: 14, x: 10, color: [Math.floor(Math.random() * 256), Math.floor(Math.random() * 256),Math.floor(Math.random() * 256)] });
       console.log('cheating pop-up')
     } else {
       dispatch({

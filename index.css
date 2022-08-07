@@ -249,6 +249,22 @@ body {
   cursor: pointer;
 }
 
+.continue, .payup, .disaprove {
+  background: none;
+	color: #ffffff;
+	border: 2px solid #ffffff;
+	padding: 16px;
+	font: inherit;
+	cursor: pointer;
+	outline: inherit;
+
+  font-size: 36px;
+
+  top: 65%;
+  left: 50% !important;
+  transform: translate(-50%, -50%);
+}
+
 .docs {
   background: var(--bg-surface);
   height: 0;
