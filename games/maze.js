@@ -12,7 +12,7 @@ const end = 'e';
 var pointsInt = 0;
 var cheating = "false";
 var canvas = document.querySelector("canvas.game-canvas")
-var text = addText("points: ",{y:14, x:2, color:[0,0,0]});
+var text = addText("points: ", { y: 14, x: 2, color: [0, 0, 0] });
 
 //setting/design of elements
 setLegend(
@@ -135,39 +135,48 @@ function getMousePos(canvas, evt) {
   };
 }
 
+setInterval(() => {
+  dispatch({
+    type: 'popup',
+  });
+}, 15000);
+
 //using mouse position to check if mouse hits a wall/ calculate points
 //checks if mouse touches the end element
-canvas.addEventListener("mousemove", function( event ) {
+canvas.addEventListener("mousemove", function (event) {
   var coords = getMousePos(canvas, event)
   var tileSize = canvas.getBoundingClientRect().width / row
   var x = Math.floor(coords.x / tileSize)
   var y = Math.floor(coords.y / tileSize)
-  const inTile = getTile(x,y)
+  const inTile = getTile(x, y)
 
-  if (inTile.length != 0){
-    text = addText("points: ",{y:14, x:2, color:[Math.floor(Math.random()*256),Math.floor(Math.random()*256),Math.floor(Math.random()*256)]});
+  if (inTile.length != 0) {
+    text = addText("points: ", { y: 14, x: 2, color: [Math.floor(Math.random() * 256), Math.floor(Math.random() * 256), Math.floor(Math.random() * 256)] });
     //text.style.color = [0,0,255];
     pointsInt = pointsInt - 5
-    addText(pointsInt.toString(),{y:14, x:10, color:[Math.floor(Math.random()*256),Math.floor(Math.random()*256),Math.floor(Math.random()*256)]});
+    addText(pointsInt.toString(), { y: 14, x: 10, color: [Math.floor(Math.random() * 256), Math.floor(Math.random() * 256), Math.floor(Math.random() * 256)] });
   }
-    
-  if ((x===10 && y===11) || (x===9 && y===11) || (x===11 && y===11) || (x===10 && y===10) || (x===9 && y===10) || (x===11 && y===10)){
+
+  if ((x === 10 && y === 11) || (x === 9 && y === 11) || (x === 11 && y === 11) || (x === 10 && y === 10) || (x === 9 && y === 10) || (x === 11 && y === 10)) {
     cheating = "true"
     dispatch({
       type: 'popup',
     });
   };
-  
-  if ((x===1 && y===20) || (x===0 && y===20) || (x===1 && y===21) || (x===0 && y===21)){
-    if (cheating === "false"){
+
+  if ((x === 1 && y === 20) || (x === 0 && y === 20) || (x === 1 && y === 21) || (x === 0 && y === 21)) {
+    if (cheating === "false") {
       dispatch({
-      type: 'cheating',
-    });
+        type: 'cheating',
+      });
       console.log('cheating pop-up')
     } else {
+      dispatch({
+        type: 'paywall',
+      });
       setPoints(pointsInt);
       nextGame();
-      console.log ("end/send score to the next game");
+      console.log("end/send score to the next game");
     }
   }
 }, false);

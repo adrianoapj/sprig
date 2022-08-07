@@ -23,6 +23,8 @@ let counter = 0;
 let spacesToAppearSpike = 10;
 let finalY = 0;
 
+let points = getPoints()
+
 const killables = [coin, spike];
 
 const playerDead = [
@@ -213,6 +215,12 @@ const obstacles = [
   },
 ];
 
+addText(`points: ${points}`, {
+  x: 0,
+  y: 2,
+  color: [0, 0, 0],
+});
+
 setMap(levels[level]);
 
 onInput("d", () => {
@@ -285,9 +293,25 @@ setInterval(() => {
   getFirst(player).y++;
 }, 100);
 
+setInterval(() => {
+  if (status === 'win') return;
+  
+  points = points - 100;
+  
+  addText(`points: ${points}`, {
+    x: 0,
+    y: 2,
+    color: [0, 0, 0],
+  });
+
+  setPoints(points);
+}, 1000);
+
 const killPlayer = () => {
   counter = 0;
   finalY = 0;
+
+  if (status === 'loss') return; 
 
   status = "loss";
 
@@ -296,6 +320,8 @@ const killPlayer = () => {
     y: 4,
     color: [255, 0, 0],
   });
+
+  points -= 1000;
 
   shake();
 
@@ -312,6 +338,12 @@ const killPlayer = () => {
     clearText();
 
     status = "playing";
+
+    addText(`points: ${points}`, {
+      x: 0,
+      y: 2,
+      color: [0, 0, 0],
+    });
   }, 400);
 };
 
@@ -401,7 +433,7 @@ afterInput(() => {
 
   if (spikeFound) fallBlock(spikeFound);
 
-  if (counter === 5 && !size) {
+  if (counter === 2 && !size) {
     finalSection.map((line, y) => {
       if (line[finalY] === ".") return;
 

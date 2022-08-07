@@ -69,6 +69,11 @@ afterInput(() => {
   if (numberCovered === targetNumber) {
     // increase the current level number
     addText("you win!", { y: 6 });
+
+    dispatch({
+      type: 'paywall',
+    });
+
     nextGame();
     
   }
