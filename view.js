@@ -18,7 +18,7 @@ export const view = (state) => {
   <div class="popup" id="popup-0">
     <div>
       <a href="https://hack.af/draw-dino">
-        <img src="/popups/0.png" width="100%" height="100%">
+        <img src="./popups/0.png" width="100%" height="100%">
       </a>
       <button @click=${closePopup}>X</button>
     </div>
@@ -27,7 +27,7 @@ export const view = (state) => {
   <div class="popup" id="popup-1">
     <div>
       <a href="https://anti.hackclub.com">
-        <img src="/popups/1.png" width="100%" height="100%">
+        <img src="./popups/1.png" width="100%" height="100%">
       </a>
       <button @click=${closePopup}>X</button>
     </div>
@@ -35,36 +35,36 @@ export const view = (state) => {
 
   <div class="popup" id="popup-2">
     <div>
-      <img src="/popups/2.png" width="100%" height="100%">
+      <img src="./popups/2.png" width="100%" height="100%">
       <button @click=${closePopup}>X</button>
     </div>
   </div>
 
   <div class="popup" id="popup-cheating">
     <div>
-      <img src="/popups/cheating.png" width="100%" height="100%">
+      <img src="./popups/cheating.png" width="100%" height="100%">
       <button class="disaprove" style="font-size: 1.5rem" @click=${closePopup}>I will be a better person</button>
     </div>
   </div>
 
   <div class="popup" id="popup-paywall">
     <div>
-      <img src="/popups/paywall.png" width="100%" height="100%">
+      <img src="./popups/paywall.png" width="100%" height="100%">
       <button class="payup" @click=${openPayment}>Pay fee</button>
     </div>
   </div>
 
   <div class="popup" id="popup-payment">
     <div>
-      <img src="/popups/payment.png" width="100%" height="100%">
+      <img src="./popups/payment.png" width="100%" height="100%">
       <button class="continue" @click=${closePopup}>Continue</button>
     </div>
   </div>
 
   <div class="popup" id="popup-prize">
     <div>
-      <img src="/popups/prize1.jpg" width="30%" style="position: absolute;top: 15%;left: 20px;">
-      <img src="/popups/prize.png" width="100%" height="100%">
+      <img src="./popups/prize1.jpg" width="30%" style="position: absolute;top: 15%;left: 20px;">
+      <img src="./popups/prize.png" width="100%" height="100%">
       <button @click=${closePopup}>X</button>
     </div>
   </div>

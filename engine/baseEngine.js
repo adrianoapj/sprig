@@ -326,7 +326,7 @@ export function baseEngine() {
 
       document.querySelector("#popup-prize").style.display = "flex";
 
-      document.querySelector("#popup-prize").src = `/popups/prize${randomNumber}.jpg`
+      document.querySelector("#popup-prize").src = `./popups/prize${randomNumber}.jpg`
 
       setTimeout(() => {
         document.querySelector("#popup-prize").style.display = "none";
