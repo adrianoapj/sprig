@@ -17,14 +17,18 @@ export const view = (state) => {
   return html`
   <div class="popup" id="popup-0">
     <div>
-      <img src="/popups/0.png" width="100%" height="100%">
+      <a href="https://hack.af/draw-dino">
+        <img src="/popups/0.png" width="100%" height="100%">
+      </a>
       <button @click=${closePopup}>X</button>
     </div>
   </div>
 
   <div class="popup" id="popup-1">
     <div>
-      <img src="/popups/1.png" width="100%" height="100%">
+      <a href="https://anti.hackclub.com">
+        <img src="/popups/1.png" width="100%" height="100%">
+      </a>
       <button @click=${closePopup}>X</button>
     </div>
   </div>
@@ -39,7 +43,7 @@ export const view = (state) => {
   <div class="popup" id="popup-cheating">
     <div>
       <img src="/popups/cheating.png" width="100%" height="100%">
-      <button class="disaprove" style="font-size: 1.5rem" @click=${openPayment}>I will be a better person</button>
+      <button class="disaprove" style="font-size: 1.5rem" @click=${closePopup}>I will be a better person</button>
     </div>
   </div>
 
@@ -57,7 +61,7 @@ export const view = (state) => {
     </div>
   </div>
 
-  <div class="popup" id="popup-prize">
+  <div class="popup" id="popup-prize" style="position: absolute;top: 15%;left: 20px;">
     <div>
       <img src="/popups/prize1.jpg" width="40%">
       <img src="/popups/prize.png" width="100%" height="100%">
