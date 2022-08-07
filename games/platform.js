@@ -443,7 +443,7 @@ afterInput(() => {
 
   if (spikeFound) fallBlock(spikeFound);
 
-  if (counter === 2 && !size) {
+  if (counter === 10 && !size) {
     finalSection.map((line, y) => {
       if (line[finalY] === ".") return;
 
