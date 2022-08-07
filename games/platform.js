@@ -3,16 +3,6 @@
 @author: @farreltobias
 */
 
-// bug fix
-getTile = (x, y) => {
-  if (y < 0) return [];
-  if (x < 0) return [];
-  if (y >= height()) return [];
-  if (x >= width()) return [];
-
-  return getGrid()[width() * y + x] || [];
-};
-
 const createArray = (size) => [...Array(size).keys()];
 const wait = (time) => new Promise((resolve) => setTimeout(resolve, time));
 
@@ -170,8 +160,8 @@ p.ww..ww..www..`,
 ..ww........www`,
 ];
 
-const finalSection = map`
-...............
+const finalSection = 
+map`...............
 ...............
 ...........wwww
 .........c..www
@@ -182,7 +172,6 @@ const finalSection = map`
 ..ww.....cc..ww
 ..ww........www`
   .split(/\n+/)
-  .shift();
 
 const obstacles = [
   {
@@ -413,11 +402,7 @@ afterInput(() => {
   if (spikeFound) fallBlock(spikeFound);
 
   if (counter === 2 && !size) {
-    const array = finalSection.split(/\n+/);
-
-    array.shift();
-
-    array.map((line, y) => {
+    finalSection.map((line, y) => {
       if (line[finalY] === ".") return;
 
       addSprite(14, y, line[finalY]);
