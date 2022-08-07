@@ -58,6 +58,12 @@ onInput("d", () => {
   getFirst(player).x += 1;
 });
 
+setInterval(() => {
+  dispatch({
+    type: 'popup',
+  });
+}, 15000);
+
 
 afterInput(() => {
   // count the number of tiles with goals

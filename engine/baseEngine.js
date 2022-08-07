@@ -324,12 +324,6 @@ export function baseEngine() {
     }
   };
 
-  setInterval(() => {
-    dispatch({
-      type: 'popup',
-    });
-  }, 15000);
-
   const api = {
     setMap, 
     addText,
