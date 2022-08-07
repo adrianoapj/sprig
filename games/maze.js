@@ -135,12 +135,6 @@ function getMousePos(canvas, evt) {
   };
 }
 
-setInterval(() => {
-  dispatch({
-    type: 'popup',
-  });
-}, 15000);
-
 //using mouse position to check if mouse hits a wall/ calculate points
 //checks if mouse touches the end element
 canvas.addEventListener("mousemove", function (event) {
@@ -159,9 +153,6 @@ canvas.addEventListener("mousemove", function (event) {
 
   if ((x === 10 && y === 11) || (x === 9 && y === 11) || (x === 11 && y === 11) || (x === 10 && y === 10) || (x === 9 && y === 10) || (x === 11 && y === 10)) {
     cheating = "true"
-    dispatch({
-      type: 'popup',
-    });
   };
 
   if ((x === 1 && y === 20) || (x === 0 && y === 20) || (x === 1 && y === 21) || (x === 0 && y === 21)) {

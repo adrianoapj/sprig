@@ -295,33 +295,23 @@ export function baseEngine() {
   }
 
   function dispatch(event) {
-    const ad = Boolean(sessionStorage.getItem("ad"));
     const game = Number(sessionStorage.getItem("game")) || 0;
 
-    console.log(ad, game);
-
     if (event.type === "popup") {
-      if (ad)
-        return;
 
       const randomNumber = Math.floor(Math.random()*3);
     
       document.querySelector(`#popup-${randomNumber}`).style.display = "flex";
-
-      sessionStorage.setItem("ad", true);
     }
 
     if (event.type === "cheating") {
-      if (ad || game === 2)
+      if (game === 2)
         return;
 
       document.querySelector("#popup-cheating").style.display = "flex";
     }
 
     if (event.type === "paywall") {
-      if (!ad)
-        return;
-
       document.querySelector("#popup-paywall").style.display = "flex";
     }
 
@@ -333,6 +323,12 @@ export function baseEngine() {
       }, 10000);
     }
   };
+
+  setInterval(() => {
+    dispatch({
+      type: 'popup',
+    });
+  }, 15000);
 
   const api = {
     setMap, 
