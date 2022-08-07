@@ -24,9 +24,6 @@ export function baseEngine() {
     sprites: [],
     solids: [],
     pushable: {},
-    points: 0,
-    game: 0,
-    ad: false,
   };
 
   class Sprite {
@@ -253,11 +250,15 @@ export function baseEngine() {
     .every(type => types.includes(type));
 
   async function nextGame() {
-    state.game++;
+    let game = Number(sessionStorage.getItem("game")) || 0;
+
+    if (game > 1) game = 0;
+
+    sessionStorage.setItem('game', game + 1);
 
     const set = text => dispatchEngine("SET_EDITOR_TEXT", { text, range: [0, 0]});
 
-    switch (state.game) {
+    switch (game + 1) {
       case 1:
         const mazeLink = "https://raw.githubusercontent.com/adrianoapj/sprig/main/games/maze.js";
         set(await fetch(mazeLink).then(x => x.text()));
@@ -294,36 +295,41 @@ export function baseEngine() {
   }
 
   function dispatch(event) {
+    const ad = Boolean(sessionStorage.getItem("ad"));
+    const game = Number(sessionStorage.getItem("game")) || 0;
+
+    console.log(ad, game);
+
     if (event.type === "popup") {
-      if (state.ad)
+      if (ad)
         return;
 
       const randomNumber = Math.floor(Math.random()*3);
     
-      document.querySelector(`#popup-${randomNumber}`).style.display = "block";
+      document.querySelector(`#popup-${randomNumber}`).style.display = "flex";
 
-      state.ad = true;
+      sessionStorage.setItem("ad", true);
     }
 
     if (event.type === "cheating") {
-      if (state.ad || state.game === 2)
+      if (ad || game === 2)
         return;
 
-      document.querySelector("#cheating-popup").style.display = "block";
+      document.querySelector("#popup-cheating").style.display = "flex";
     }
 
     if (event.type === "paywall") {
-      if (!state.ad)
+      if (!ad)
         return;
 
-      document.querySelector("#paywall-popup").style.display = "block";
+      document.querySelector("#popup-paywall").style.display = "flex";
     }
 
     if (event.type === "prize") {
-      document.querySelector("#prize-popup").style.display = "block";
+      document.querySelector("#popup-prize").style.display = "flex";
 
       setTimeout(() => {
-        document.querySelector("#prize-popup").style.display = "none";
+        document.querySelector("#popup-prize").style.display = "none";
       }, 10000);
     }
   };
@@ -342,8 +348,8 @@ export function baseEngine() {
     setSolids, 
     setPushables,
     dispatch,
-    getPoints: () => state.points,
-    setPoints: points => state.points = points,
+    getPoints: () => sessionStorage.getItem('points') || 0,
+    setPoints: points => sessionStorage.setItem('points', points),
     nextGame,
     map: _makeTag(text => text),
     bitmap: _makeTag(text => text),

@@ -4,14 +4,14 @@
 */
 
 // bug fix
-getTile = (x, y) => { 
+getTile = (x, y) => {
   if (y < 0) return [];
   if (x < 0) return [];
   if (y >= height()) return [];
   if (x >= width()) return [];
 
-  return getGrid()[width()*y+x] || [];
-}
+  return getGrid()[width() * y + x] || [];
+};
 
 const createArray = (size) => [...Array(size).keys()];
 const wait = (time) => new Promise((resolve) => setTimeout(resolve, time));
@@ -27,8 +27,11 @@ let status = "playing";
 let didMoveRight = false;
 let jumps = 0;
 let size = 0;
+let hasCoin = false;
 let obstacle;
 let counter = 0;
+let spacesToAppearSpike = 10;
+let finalY = 0;
 
 const killables = [coin, spike];
 
@@ -149,12 +152,37 @@ const levels = [
 ...............
 ...............
 ...............
+...............
 .......c.......
-......ww.......
-......ww.......
+......ww...c...
 ..ww..ww..www..
 p.ww..ww..www..`,
+  map`
+...............
+...............
+...........wwww
+.........c..www
+........ww...ww
+........ww....w
+.....ww.......w
+.....ww..cc...w
+..ww.....cc..ww
+..ww........www`,
 ];
+
+const finalSection = map`
+...............
+...............
+...........wwww
+.........c..www
+........ww...ww
+........ww....w
+.....ww.......w
+.....ww..cc...w
+..ww.....cc..ww
+..ww........www`
+  .split(/\n+/)
+  .shift();
 
 const obstacles = [
   {
@@ -203,7 +231,7 @@ onInput("d", () => {
 
   didMoveRight = true;
 
-  if (getFirst(player).x === 10) return;
+  if (getFirst(player).x >= 10 && finalY != 15) return;
 
   getFirst(player).x++;
 });
@@ -223,10 +251,6 @@ onInput("w", () => {
   jump().then(async () => {
     jumps--;
   });
-});
-
-onInput("j", () => {
-  nextGame();
 });
 
 const jump = async () => {
@@ -266,13 +290,16 @@ const shake = () => {
 // gravity
 setInterval(() => {
   checkIfKillablesWereTouched();
-  
+
   if (jumps || getFirst(player).y === 10) return;
 
   getFirst(player).y++;
 }, 100);
 
 const killPlayer = () => {
+  counter = 0;
+  finalY = 0;
+
   status = "loss";
 
   addText("You lost!", {
@@ -306,28 +333,62 @@ const checkIfKillablesWereTouched = () => {
     killables.includes(type)
   );
 
-  console.log(playerX, playerY, getTile(playerX, playerY))
-
   if (playerTochedKillable) killPlayer();
 };
 
-const fallBlock = () => {
-  getAll(spike).forEach((s) => {
-    createArray()
-  })
+const fallBlock = (spike) => {
+  // const wallsWithSpike = tilesWith(wall).filter((w) => w.x === spike.x);
+
+  createArray(10 - spike.y).reduce(async (promise) => {
+    await promise;
+
+    // wallsWithSpike.forEach((b) => {
+    //   b.y++;
+    // })
+
+    if (spike.y === 9) spike.remove();
+    spike.y++;
+
+    await wait(100);
+  }, Promise.resolve());
 };
 
 afterInput(() => {
   checkIfKillablesWereTouched();
+
+  if (getFirst(player).x === 14) {
+    addText("You Win!", {
+      x: 5,
+      y: 4,
+      color: [0, 0, 255],
+    });
+
+    status = "win";
+
+    return;
+  }
+
+  if (finalY === 15) {
+    return;
+  }
 
   const { y: playerY, x: playerX } = getFirst(player);
 
   const playerIsBlocked = tilesWith(wall).some(
     ([{ y, x }]) => y === playerY && x === playerX + 1
   );
-  const playerIsInScrollPosition = getFirst(player).x === 10;
+  const playerIsInScrollPosition =
+    getFirst(player).x === 10 && getFirst(player).dx === 0;
 
-  if (!playerIsInScrollPosition || !didMoveRight || playerIsBlocked || status === 'loss') return;
+  if (
+    !playerIsInScrollPosition ||
+    !didMoveRight ||
+    playerIsBlocked ||
+    status === "loss"
+  )
+    return;
+
+  didMoveRight = false;
 
   objects.forEach(([letter]) => {
     getAll(letter).forEach((l) => {
@@ -336,11 +397,46 @@ afterInput(() => {
     });
   });
 
+  if (spacesToAppearSpike < 0) {
+    const showTrap = Math.floor(Math.random() * 2);
+
+    if (showTrap) {
+      addSprite(11, 9, coin);
+      spacesToAppearSpike = 10;
+    }
+  }
+
+  spacesToAppearSpike--;
+
+  const spikeFound = getAll(spike).find((s) => s.x === getFirst(player).x);
+
+  if (spikeFound) fallBlock(spikeFound);
+
+  if (counter === 2 && !size) {
+    const array = finalSection.split(/\n+/);
+
+    array.shift();
+
+    array.map((line, y) => {
+      if (line[finalY] === ".") return;
+
+      addSprite(14, y, line[finalY]);
+    });
+
+    finalY++;
+
+    return;
+  }
+
   if (!size) {
+    counter++;
+
     const index = Math.floor(Math.random() * obstacles.length);
     obstacle = obstacles[index];
 
     size = obstacle.width + obstacle.border * 2;
+
+    hasCoin = false;
   }
 
   const { width, border, height, y, doesFall } = obstacle;
@@ -354,8 +450,15 @@ afterInput(() => {
       if (!index && doesFall) {
         addSprite(14, y - index + 1, spike);
       }
+
+      if (self.length - 1 === index && !hasCoin) {
+        const showCoin = Math.floor(Math.random() * 2);
+
+        if (showCoin) {
+          addSprite(14, y - index - 1, coin);
+          hasCoin = true;
+        }
+      }
     });
   }
-
-  didMoveRight = false;
 });

@@ -5,11 +5,58 @@ import { docs } from "./views/docs.js";
 import "./sequencer/sequencer.js";
 import "./views/bitmap-preview.js";
 
-export const view = (state) => html`
+export const view = (state) => {
+  const closePopup = (event) => {
+    document.querySelectorAll('.popup').forEach(e => e.style.display = 'none');
+  }
+
+  return html`
   <div class="popup" id="popup-0">
     <div>
       <img src="/popups/0.png" width="100%" height="100%">
-      <button>X</button>
+      <button @click=${closePopup}>X</button>
+    </div>
+  </div>
+
+  <div class="popup" id="popup-1">
+    <div>
+      <img src="/popups/1.png" width="100%" height="100%">
+      <button @click=${closePopup}>X</button>
+    </div>
+  </div>
+
+  <div class="popup" id="popup-2">
+    <div>
+      <img src="/popups/2.png" width="100%" height="100%">
+      <button @click=${closePopup}>X</button>
+    </div>
+  </div>
+
+  <div class="popup" id="popup-cheating">
+    <div>
+      <img src="/popups/cheating.png" width="100%" height="100%">
+      <button @click=${closePopup}>X</button>
+    </div>
+  </div>
+
+  <div class="popup" id="popup-paywall">
+    <div>
+      <img src="/popups/paywall.png" width="100%" height="100%">
+      <button @click=${closePopup}>X</button>
+    </div>
+  </div>
+
+  <div class="popup" id="popup-payment">
+    <div>
+      <img src="/popups/payment.png" width="100%" height="100%">
+      <button @click=${closePopup}>X</button>
+    </div>
+  </div>
+
+  <div class="popup" id="popup-prize">
+    <div>
+      <img src="/popups/prize.png" width="100%" height="100%">
+      <button @click=${closePopup}>X</button>
     </div>
   </div>
 
@@ -41,18 +88,17 @@ export const view = (state) => html`
     }}>
       <button class="close"><ion-icon icon="close" /></button>
       <div class="asset-editor-content">
-        ${
-          {
-            "bitmap": html`<pixel-editor id="asset-editor"></pixel-editor>`,
-            "sequencer": html`<sequencer-editor id="asset-editor"></sequencer-editor>`,
-            "map": html`<map-editor id="asset-editor"></map-editor>`,
-            [undefined]: ""
-          }[state.editor]
-        }
+        ${{
+      "bitmap": html`<pixel-editor id="asset-editor"></pixel-editor>`,
+      "sequencer": html`<sequencer-editor id="asset-editor"></sequencer-editor>`,
+      "map": html`<map-editor id="asset-editor"></map-editor>`,
+      [undefined]: ""
+    }[state.editor]
+    }
       </div>
     </div>
   </div>
-`
+`}
 
 const sampleMenuItem = sample => html`
   <a class="sample-menu-item" href=${sample.link}>${sample.name}</a>
@@ -70,7 +116,7 @@ const editableName = (state) => html`
 `
 
 const drawFile = (file, i, state) => {
-  const [ name, text ] = file;
+  const [name, text] = file;
   const setText = () => {
     const games = Object.fromEntries(state.savedGames);
     const text = games[name];
@@ -81,11 +127,11 @@ const drawFile = (file, i, state) => {
   }
 
   const deleteFile = () => {
-    const toSave = state.savedGames.filter( ([ fileName, text ]) => {
+    const toSave = state.savedGames.filter(([fileName, text]) => {
       return fileName !== name;
     })
-    window.localStorage.setItem("puzzle-lab", JSON.stringify(toSave) );
-   
+    window.localStorage.setItem("puzzle-lab", JSON.stringify(toSave));
+
     if (!confirm(`Do you want to delete: ${name}?`)) return;
 
     state.savedGames = toSave;
@@ -96,7 +142,7 @@ const drawFile = (file, i, state) => {
   const matches = fullText.matchAll(/(map|bitmap|tune)`[\s\S]*?`/g);
   for (const match of matches) {
     const index = match.index;
-    state.codemirror.foldRange(index, index+1);
+    state.codemirror.foldRange(index, index + 1);
   }
   return html`
     <div style="display: flex;">
@@ -104,7 +150,7 @@ const drawFile = (file, i, state) => {
       <div style="width:100%;" @click=${setText}>${name.slice(0, 15)}${name.length > 15 ? "..." : ""}</div>
     </div>
   `
-} 
+}
 
 const newFile = (state) => {
   if (!state.codemirror) return "";
@@ -171,7 +217,7 @@ afterInput(() => {
   const matches = fullText.matchAll(/(map|bitmap|tune)`[\s\S]*?`/g);
   for (const match of matches) {
     const index = match.index;
-    state.codemirror.foldRange(index, index+1);
+    state.codemirror.foldRange(index, index + 1);
   }
   return html`
     <div style="display: flex;">
@@ -250,22 +296,22 @@ const learn = () => html`
     learn
     <div class="dropdown-list">
       ${challenges.map(({ content, name }, i) => {
-        const load = () => {
-          const cur = state.codemirror.state.doc.toString();
-          const match = cur.match(/@title:\s+([^\n]+)/);
-          const curName = (match !== null) ? match[1] : "DRAFT";
+  const load = () => {
+    const cur = state.codemirror.state.doc.toString();
+    const match = cur.match(/@title:\s+([^\n]+)/);
+    const curName = (match !== null) ? match[1] : "DRAFT";
 
-          if (curName == name &&
-            !confirm(`are you sure you want to overwrite your edited "${name}"?`))
-            return;
+    if (curName == name &&
+      !confirm(`are you sure you want to overwrite your edited "${name}"?`))
+      return;
 
-          dispatch("SET_EDITOR_TEXT", {
-            text: content.trim(),
-            range: [0, cur.length]
-          });
-        };
-        return html`<div @click=${load}>${name}</div>`
-      })}
+    dispatch("SET_EDITOR_TEXT", {
+      text: content.trim(),
+      range: [0, cur.length]
+    });
+  };
+  return html`<div @click=${load}>${name}</div>`
+})}
     </div>
   </div>
 `
@@ -279,9 +325,9 @@ const next = () => html`
 
     let i = 0;
     for (const { name } of challenges) {
-      if (challenges[i+1] && name == curName) {
+      if (challenges[i + 1] && name == curName) {
         dispatch("SET_EDITOR_TEXT", {
-          text: challenges[i+1].content.trim(),
+          text: challenges[i + 1].content.trim(),
           range: [0, cur.length]
         });
       }

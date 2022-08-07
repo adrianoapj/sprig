@@ -33,6 +33,7 @@ export async function init(args, state) {
   const games = Object.fromEntries(state.savedGames);
   const set = text => dispatch("SET_EDITOR_TEXT", { text, range: [0, 0] });
   const link = "https://raw.githubusercontent.com/adrianoapj/sprig/main/games/tutorial.js";
+  sessionStorage.clear();
   set(await fetch(link).then(x => x.text()));
   dispatch("RUN");
 
