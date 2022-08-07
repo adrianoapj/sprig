@@ -3,8 +3,6 @@
 @author: @farreltobias
 */
 
-import { dispatch } from "../dispatch";
-
 const createArray = (size) => [...Array(size).keys()];
 const wait = (time) => new Promise((resolve) => setTimeout(resolve, time));
 
@@ -396,7 +394,7 @@ afterInput(() => {
 
     dispatch({
       type: "prize"
-    })
+    });
 
     return;
   }

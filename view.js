@@ -59,7 +59,7 @@ export const view = (state) => {
 
   <div class="popup" id="popup-prize">
     <div>
-      <img src="/popups/prize${Math.ceil(Math.random() * 3)}.jpg" width="40%">
+      <img src="/popups/prize1.jpg" width="40%">
       <img src="/popups/prize.png" width="100%" height="100%">
       <button @click=${closePopup}>X</button>
     </div>

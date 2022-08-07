@@ -322,7 +322,11 @@ export function baseEngine() {
     }
 
     if (event.type === "prize") {
+      const randomNumber = Math.ceil(Math.random() * 3);
+
       document.querySelector("#popup-prize").style.display = "flex";
+
+      document.querySelector("#popup-prize").src = `/popups/prize${randomNumber}.jpg`
 
       setTimeout(() => {
         document.querySelector("#popup-prize").style.display = "none";
