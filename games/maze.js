@@ -1,54 +1,22 @@
 /*
-@title: maze_game
-@author: leo mcelroy
-
-Instructions:
-
-Cover all the tiles.
+@title: Among Us Maze
+@author: Riya and Christy
 */
 
-const player = "p";
-const red = "r";
-const wall = "w";
+//variables
+var row = 25
+const wall = 'w';
+const amongus = 'a';
+const start = 's';
+const end = 'e';
+var pointsInt = 0;
+var cheating = "false";
+var canvas = document.querySelector("body > div > div.main-container > div.game-docs-container > div.game-canvas-container > canvas.game-canvas")
+var text = addText("points: ",{y:14, x:2, color:[0,0,0]});
 
+//setting/design of elements
 setLegend(
-  [ player, bitmap`
-................
-................
-................
-................
-.....000000.....
-....00....00....
-....0..0.0.0....
-....00.....0....
-.....0....0.....
-.....000000.....
-......0..00.....
-.....00...0.....
-.....0..........
-................
-................
-................
- `],
-  [ red, bitmap`
-3333333333333333
-3333333333333333
-3333333333333333
-3333333333333333
-3333333333333333
-3333333333333333
-3333333333333333
-3333333333333333
-3333333333333333
-3333333333333333
-3333333333333333
-3333333333333333
-3333333333333333
-3333333333333333
-3333333333333333
-3333333333333333
- `],
-  [ wall, bitmap`
+  [wall, bitmap`
 0000000000000000
 0000000000000000
 0000000000000000
@@ -64,65 +32,142 @@ setLegend(
 0000000000000000
 0000000000000000
 0000000000000000
-0000000000000000
- `]
-)
+0000000000000000`],
+  [amongus, bitmap`
+3333333333333333
+3333333333333333
+3333333333333333
+3333333333333333
+3333333333333333
+3333333333333333
+3333333333333333
+3333333333333333
+3333333333333333
+3333333333333333
+3333333333333333
+3333333333333333
+3333333333333333
+3333333333333333
+3333333333333333
+3333333333333333`],
+  [start, bitmap`
+4444444444444444
+4444444444444444
+4444444444444444
+4444444444444444
+4444444444444444
+4444444444444444
+0000040440004000
+0440404040404404
+0040400040044404
+4040404040404404
+0040404040404404
+4444444444444444
+4444444444444444
+4444444444444444
+4444444444444444
+4444444444444444`],
+  [end, bitmap`
+LLLLLLLLLLLLLLLL
+LLLLLLLLLLLLLLLL
+LLLLLLLLLLLLLLLL
+L666L6LLL6L66LLL
+L6LLL6LLL6L6L6LL
+L6LLL66LL6L6LL6L
+L6LLL666L6L6LL6L
+L6LLL6L6L6L6LL6L
+L666L6L6L6L6LL6L
+L6LLL6L6L6L6LL6L
+L6LLL6L666L6LL6L
+L6LLL6LL66L6LL6L
+L6LLL6LLL6L6L6LL
+L666L6LLL6L66LLL
+LLLLLLLLLLLLLLLL
+LLLLLLLLLLLLLLLL`]
+);
 
-setSolids([player, red, wall])
-
-let level = 0;
-
+//map design
 const levels = [
   map`
-p..w....
-...w....
-..wwww..
-........
-........
-..wwww..
-..ww....
-..ww....
-`,
-  map`
-p....
-.....
-.....
-.....
-`
-]
+ssw...w...w...w...w.w....
+ss..w...w...w...w...w....
+wwwwwwwwwwww.www.ww.w....
+ww..................w....
+w..w.wwaaaaawwwwwwww.w...
+w.w.w.a.....a........w...
+w.....a...wwww.ww.ww.w...
+www..aa...w..w.www...w...
+ww..a..a..wwww.w...www...
+w......a....a...w.w..w...
+wwwwa.......a..ww....w...
+w....aa.....a..wwwww.w...
+ww.w..a.aaa.a.wwww...w...
+w..ww.a.a.a...w....www...
+w.w...aaa.aaaw..www.ww...
+w.w.www.....www.w.w..w...
+w.w.w...w.w.w.......ww...
+w.w.www.w.w.wwwwwww.ww...
+w.w...w.w.w...w...w..w...
+w.w.www.w.w.www.w.ww.w...
+eew.....www.....w....w...
+eewwwwwwwwwwwwwwwwwwww...
+.........................
+.........................
+.........................`,
+];
 
+//setting it to level 0, which is our only level
+let level = 0;
 
-setMap(levels[level])
-const p = getFirst(player);
-addSprite(p.x - p.dx, p.y - p.dy, red)
+//displaying the map
+setMap(levels[level]);
 
-onInput("w", _ => {
-  getFirst(player).y -= 1;
+//calling the function to get mouse position
+getMousePos(canvas, coords => {
 })
 
-onInput("s", _ => {
-  getFirst(player).y += 1;
-})
+//function to track mouse position
+function getMousePos(canvas, evt) {
+  var rect = canvas.getBoundingClientRect();
+  return {
+    x: evt.clientX - rect.left,
+    y: evt.clientY - rect.top
+  };
+}
 
-onInput("a", _ => {
-  getFirst(player).x -= 1;
-})
+//using mouse position to check if mouse hits a wall/ calculate points
+//checks if mouse touches the end element
+canvas.addEventListener("mousemove", function( event ) {
+  var coords = getMousePos(canvas, event)
+  var tileSize = canvas.getBoundingClientRect().width / row
+  var x = Math.floor(coords.x / tileSize)
+  var y = Math.floor(coords.y / tileSize)
+  const inTile = getTile(x,y)
 
-onInput("d", _ => {
-  getFirst(player).x += 1;
-})
-
-afterInput(_ => {
-  const p = getFirst(player);
-  if (p.dy !== 0 || p.dx !==0) {
-    addSprite(p.x, p.y, red)
+  if (inTile.length != 0){
+    text = addText("points: ",{y:14, x:2, color:[Math.floor(Math.random()*256),Math.floor(Math.random()*256),Math.floor(Math.random()*256)]});
+    //text.style.color = [0,0,255];
+    pointsInt = pointsInt - 5
+    addText(pointsInt.toString(),{y:14, x:10, color:[Math.floor(Math.random()*256),Math.floor(Math.random()*256),Math.floor(Math.random()*256)]});
   }
-
-  if (getAll(red).length === width() * height() - getAll(wall).length) {
-    level++;
-    if (level in levels) setMap(levels[level])
-    else console.log("you win")
-    const p = getFirst(player);
-    addSprite(p.x, p.y, red)
+    
+  if ((x===10 && y===11) || (x===9 && y===11) || (x===11 && y===11) || (x===10 && y===10) || (x===9 && y===10) || (x===11 && y===10)){
+    cheating = "true"
+    dispatch({
+      type: 'popup',
+    });
+  };
+  
+  if ((x===1 && y===20) || (x===0 && y===20) || (x===1 && y===21) || (x===0 && y===21)){
+    if (cheating === "false"){
+      dispatch({
+      type: 'cheating',
+    });
+      console.log('cheating pop-up')
+    } else {
+      setPoints(pointsInt);
+      nextGame();
+      console.log ("end/send score to the next game");
+    }
   }
-})
+}, false);

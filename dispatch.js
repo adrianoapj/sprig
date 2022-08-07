@@ -72,10 +72,10 @@ const ACTIONS = {
     });    
   },
   SET_EDITOR_TEXT({ text, range }, state) {
-    const [ from, to ] = range;
+    const [ from ] = range;
     const changes = {
       from,
-      to,
+      to: state.codemirror.state.doc.toString().length,
       insert: text
     };
 

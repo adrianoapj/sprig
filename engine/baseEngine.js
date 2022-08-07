@@ -1,4 +1,4 @@
-import { dispatch } from '../dispatch';
+import { dispatch as dispatchEngine } from '../dispatch';
 
 // Tagged tempalate literal factory go brrr
 function _makeTag(cb) {
@@ -252,14 +252,14 @@ export function baseEngine() {
     .every(type => types.includes(type));
 
   async function nextGame() {
-    return;
     state.game++;
+
+    const set = text => dispatchEngine("SET_EDITOR_TEXT", { text, range: [0, 0]});
 
     switch (state.game) {
       case 1:
-        const set = text => dispatch("SET_EDITOR_TEXT", { text, range: [0, 0] });
-        const link = "https://raw.githubusercontent.com/adrianoapj/sprig/main/games/9_puzzle.js";
-        set(await fetch(link).then(x => x.text()));
+        const mazeLink = "https://raw.githubusercontent.com/adrianoapj/sprig/main/games/maze.js";
+        set(await fetch(mazeLink).then(x => x.text()));
         state = {
           legend: [],
           texts: [],
@@ -271,7 +271,23 @@ export function baseEngine() {
           solids: [],
           pushable: {},
         };
-        dispatch("RUN");
+        dispatchEngine("RUN");
+        break;
+      case 2:
+        const platformLink = "https://raw.githubusercontent.com/adrianoapj/sprig/main/games/platform.js";
+        set(await fetch(platformLink).then(x => x.text()));
+        state = {
+          legend: [],
+          texts: [],
+          dimensions: {
+            width: 0,
+            height: 0,
+          },
+          sprites: [],
+          solids: [],
+          pushable: {},
+        };
+        dispatchEngine("RUN");
         break;
     }
   }

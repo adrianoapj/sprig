@@ -150,7 +150,7 @@ body {
 .code-container {
   background: var(--bg-surface);
   width: var(--editor-width);
-  display: block;
+  display: none;
   flex-direction: column;
 }
 
