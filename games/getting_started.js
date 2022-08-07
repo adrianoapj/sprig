@@ -1,130 +1,83 @@
 /*
-@title: getting_started
-@author: leo
-
-Instructions:
-
-Welcome to Sprig!!!
-
-First hit run to start the game (you can also press shift+enter).
-
-To beat each level you'll have to edit the code.
-
-The code for this game starts on line 70.
-
-The objective is to push the purple boxes onto the green goals.
-
-Use "w", "a", "s", "d" to move around. 
-(You'll have to add "w" and "a" yourself!)
-
-Press j to reset the current level.
-
---------
-Level 1
---------
-
-Make the purple block pushable. 
-
---------
-Level 2
---------
-
-Add controls to move up and left.
-
-
-Tip: 
-Do you find it annoying restarting at level 0?
-Try adjusting the starting level.
-
---------
-Level 3
---------
-
-Edit the map.
-
---------
-Level 4
---------
-
-Make boxes push boxes.
-
---------
-Level 5
---------
-
-Solve the puzzle!
-
---------
-END
---------
-
-Make your own game! Try
- - adding two players
- - leaving a trail as you move
- - having different blocks and goal types
- - come up with your own mechanic!
-
+@title: base_platformer
+@author: @farreltobias
 */
 
+// bug fix
+getTile = (x, y) => { 
+  if (y < 0) return [];
+  if (x < 0) return [];
+  if (y >= height()) return [];
+  if (x >= width()) return [];
+
+  return getGrid()[width()*y+x] || [];
+}
+
+const createArray = (size) => [...Array(size).keys()];
+const wait = (time) => new Promise((resolve) => setTimeout(resolve, time));
 
 const player = "p";
-const box = "b";
-const goal = "g";
 const wall = "w";
+const coin = "c";
+const spike = "s";
 
-setLegend(
-  [ player, bitmap`
+// playing, win, loss
+let status = "playing";
+
+let didMoveRight = false;
+let jumps = 0;
+let size = 0;
+let obstacle;
+let counter = 0;
+
+const killables = [coin, spike];
+
+const playerDead = [
+  player,
+  bitmap`
 ................
 ................
 ................
-.......0........
-.....00.000.....
-....0.....00....
-....0.0.0..0....
-....0......0....
-....0......0....
-....00....0.....
-......00000.....
-......0...0.....
-....000...000...
-................
-................
-................`],
-  [ box, bitmap`
 ................
 ................
 ................
-...88888888888..
-...8....8....8..
-...8....8....8..
-...8....8....8..
-...8....8....8..
-...88888888888..
-...8....8....8..
-...8....8....8..
-...8....8....8..
-...8....8....8..
-...88888888888..
-................
-................`],
-  [ goal, bitmap`
 ................
 ................
 ................
-....444444......
-...44....44.....
-...4......4.....
-...4.......4....
-...4.......4....
-...4.......4....
-...44......4....
-....4......4....
-....44....44....
-.....444444.....
+.........33.....
+.......33333....
+......3333333...
+...33333333333..
+..3333333333333.
+.33333333333333.
+................`,
+];
+
+const playerAlive = [
+  player,
+  bitmap`
 ................
 ................
-................`],
-  [ wall, bitmap`
+..333333333333..
+..333333333333..
+..333333333333..
+..333333333333..
+..333333333333..
+..333333333333..
+..333333333333..
+..333333333333..
+..333333333333..
+..333333333333..
+..333333333333..
+..333333333333..
+................
+................`,
+];
+
+const objects = [
+  [
+    wall,
+    bitmap`
 0000000000000000
 0000000000000000
 0000000000000000
@@ -140,81 +93,265 @@ setLegend(
 0000000000000000
 0000000000000000
 0000000000000000
-0000000000000000`]
-);
+0000000000000000`,
+  ],
+  [
+    coin,
+    bitmap`
+......0000......
+....00222200....
+...0226666660...
+...0266226660...
+..026626606660..
+..026626606660..
+..026626606660..
+..026626606660..
+..026626606660..
+..026626606660..
+..026626606660..
+...0666006660...
+...0666666660...
+....00666600....
+......0000......
+................`,
+  ],
+  [
+    spike,
+    bitmap`
+.....021111L0...
+.....02111LL0...
+.....0021LL0....
+......021L0.....
+......021L0.....
+......022L0.....
+......002L0.....
+.......020......
+.......020......
+.......020......
+........00......
+........0.......
+........0.......
+................
+................
+................`,
+  ],
+];
+
+setLegend(playerAlive, ...objects);
+
+setSolids([player, wall]);
 
 let level = 0;
 const levels = [
   map`
-p.bg`,
-  map`
-p..
-.b.
-..g`,
-  map`
-p.wg
-.bw.
-..w.
-..w.`,
-  map`
-p...
-...b
-...b
-.bbg`,
-  map`
-p.w.
-.bwg
-....
-..bg`
+...............
+...............
+...............
+...............
+...............
+.......c.......
+......ww.......
+......ww.......
+..ww..ww..www..
+p.ww..ww..www..`,
 ];
 
-const currentLevel = levels[level];
-setMap(currentLevel);
+const obstacles = [
+  {
+    width: 4,
+    height: 1,
+    border: 1,
+    y: 6,
+  },
+  {
+    width: 2,
+    height: 2,
+    border: 1,
+    y: 9,
+  },
+  {
+    width: 2,
+    height: 3,
+    border: 1,
+    y: 9,
+  },
+  {
+    width: 2,
+    height: 2,
+    border: 1,
+    y: 5,
+    doesFall: true,
+  },
+  {
+    width: 3,
+    height: 1,
+    border: 1,
+    y: 8,
+  },
+  {
+    width: 2,
+    height: 2,
+    border: 1,
+    y: 6,
+  },
+];
 
-setSolids([ player, box, wall ]);
-
-setPushables({
-  [player]: []
-});
-
-// START - PLAYER MOVEMENT CONTROLS
-
-onInput("s", () => {
-  getFirst(player).y += 1;
-});
+setMap(levels[level]);
 
 onInput("d", () => {
-  getFirst(player).x += 1;
+  if (status === "loss") return;
+
+  didMoveRight = true;
+
+  if (getFirst(player).x === 10) return;
+
+  getFirst(player).x++;
 });
 
-// END - PLAYER MOVEMENT CONTROLS
+onInput("a", () => {
+  if (status === "loss") return;
 
-onInput("j", () => {
-  const currentLevel = levels[level];
-  if (currentLevel !== undefined) {
-    clearText("");
-    setMap(currentLevel);
-  }
+  getFirst(player).x--;
 });
+
+onInput("w", () => {
+  if (status === "loss") return;
+
+  if (jumps) return;
+
+  jumps++;
+  jump().then(async () => {
+    jumps--;
+  });
+});
+
+const jump = async () => {
+  await createArray(3).reduce(async (promise) => {
+    await promise;
+
+    getFirst(player).y--;
+
+    checkIfKillablesWereTouched();
+
+    await wait(100);
+  }, Promise.resolve());
+
+  await resetGravity();
+};
+
+const resetGravity = async () => {
+  await createArray(3).reduce(async (promise) => {
+    await promise;
+
+    getFirst(player).y++;
+
+    await wait(100);
+  }, Promise.resolve());
+};
+
+const shake = () => {
+  const gameCanvasContainer = document.querySelector(".game-canvas-container");
+
+  gameCanvasContainer.classList.add("shake");
+
+  setTimeout(() => {
+    gameCanvasContainer.classList.remove("shake");
+  }, 200);
+};
+
+// gravity
+setInterval(() => {
+  checkIfKillablesWereTouched();
+  
+  if (jumps || getFirst(player).y === 10) return;
+
+  getFirst(player).y++;
+}, 100);
+
+const killPlayer = () => {
+  status = "loss";
+
+  addText("You lost!", {
+    x: 10,
+    y: 4,
+    color: [255, 0, 0],
+  });
+
+  shake();
+
+  setLegend(playerDead, ...objects);
+
+  setTimeout(() => {
+    setLegend(playerAlive, ...objects);
+
+    setMap(levels[level]);
+
+    getFirst(player).y = 10;
+    getFirst(player).x = 0;
+
+    clearText();
+
+    status = "playing";
+  }, 400);
+};
+
+const checkIfKillablesWereTouched = () => {
+  const { y: playerY, x: playerX } = getFirst(player);
+
+  const playerTochedKillable = getTile(playerX, playerY).some(({ type }) =>
+    killables.includes(type)
+  );
+
+  console.log(playerX, playerY, getTile(playerX, playerY))
+
+  if (playerTochedKillable) killPlayer();
+};
+
+const fallBlock = () => {
+  getAll(spike).forEach((s) => {
+    createArray()
+  })
+};
 
 afterInput(() => {
-  // count the number of tiles with goals
-  const targetNumber = tilesWith(goal).length;
-  
-  // count the number of tiles with goals and boxes
-  const numberCovered = tilesWith(goal, box).length;
+  checkIfKillablesWereTouched();
 
-  if (numberCovered === targetNumber) {
-    // increase the current level number
-    level = level + 1;
+  const { y: playerY, x: playerX } = getFirst(player);
 
-    const currentLevel = levels[level];
+  const playerIsBlocked = tilesWith(wall).some(
+    ([{ y, x }]) => y === playerY && x === playerX + 1
+  );
+  const playerIsInScrollPosition = getFirst(player).x === 10;
 
-    // make sure the level exists and if so set the map
-    if (currentLevel !== undefined) {
-      setMap(currentLevel);
-    } else {
-      addText("you win!", { y: 4 });
-    }
+  if (!playerIsInScrollPosition || !didMoveRight || playerIsBlocked || status === 'loss') return;
+
+  objects.forEach(([letter]) => {
+    getAll(letter).forEach((l) => {
+      if (!l.x) l.remove();
+      l.x--;
+    });
+  });
+
+  if (!size) {
+    const index = Math.floor(Math.random() * obstacles.length);
+    obstacle = obstacles[index];
+
+    size = obstacle.width + obstacle.border * 2;
   }
+
+  const { width, border, height, y, doesFall } = obstacle;
+
+  size -= 1;
+
+  if (size <= width + border && size > border) {
+    createArray(height).forEach((_, index, self) => {
+      addSprite(14, y - index, wall);
+
+      if (!index && doesFall) {
+        addSprite(14, y - index + 1, spike);
+      }
+    });
+  }
+
+  didMoveRight = false;
 });

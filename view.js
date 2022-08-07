@@ -1,15 +1,12 @@
 import { html } from "./libs/uhtml.js";
 import { dispatch } from "./dispatch.js";
 
-import { challenges } from "./challenges.js";
 import { docs } from "./views/docs.js";
-import "./pixel-editor/pixel-editor.js";
 import "./sequencer/sequencer.js";
-import "./map-editor/map-editor.js";
 import "./views/bitmap-preview.js";
 
 export const view = (state) => html`
-  ${menu(state)}
+  ${startButton(state)}
 
   <div class="main-container">
     <div class="code-container">
@@ -29,7 +26,6 @@ export const view = (state) => html`
       </div>
     </div>
 
-    <div class="vertical-bar"></div>
   </div>
 
   <div class=${["asset-editor-container", state.editor ? "" : "hide"].join(" ")}  @click=${(event) => {
@@ -178,7 +174,16 @@ afterInput(() => {
       <div style="width:100%;" @click=${setText}>new file</div>
     </div>
   `
-} 
+}
+
+const startButton = (state) => html`
+<div 
+  class=${["menu-item", "run", state.staleRun ? "stale-run" : ""].join(" ")} 
+  @click=${() => dispatch("RUN")}>
+  <ion-icon name="play" style="margin-right: 6px;" />
+  Start game
+</div>
+`;
 
 const menu = (state) => html`
   <div class="menu">

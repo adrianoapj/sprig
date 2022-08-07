@@ -26,11 +26,9 @@ body, html, .root {
 
 body {
   font-family: "Fira Mono", monospace;
-  background: var(--pcb-base);
-  background-image: url(/bg.svg);
+  background-image: url(/bg.png);
   background-position: center center;
-  background-repeat: no-repeat;
-  background-size: cover;
+  background-size: 100px;
   padding: 20px;
 }
 
@@ -40,7 +38,7 @@ body {
 }
 
 .menu {
-  display: flex;
+  display: none;
   align-items: flex-start;
   padding: 0 2px;
   position: relative;
@@ -83,7 +81,10 @@ body {
 .run {
   box-shadow: inset 0 -6px 0 0 var(--pcb-lighter);
   background: var(--pcb-trace);
-  margin-left: 60px;
+  margin: 20px 40%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   /*position: absolute;*/
   /*top: 0;*/
   /*left: 50%;*/
@@ -149,7 +150,7 @@ body {
 .code-container {
   background: var(--bg-surface);
   width: var(--editor-width);
-  display: flex;
+  display: block;
   flex-direction: column;
 }
 
@@ -196,7 +197,8 @@ body {
   max-height: calc(100% - var(--docs-percentage));
   aspect-ratio: 5/4;
   transition: height 0.2s ease-in-out;
-  background: var(--pcb-trace);
+  background-size: 150px;
+  background: linear-gradient(90deg, rgba(5, 11, 20, 0.3) 0%, rgba(5, 11, 20, 0.3) 100% ),url(/patterns/green.png);
   display: flex;
   align-items: center;
   justify-content: center;
